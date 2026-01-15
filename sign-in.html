@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial scale=1.0" />
+    <title>User Data</title>
+</head>
+
+<body>
+    <h2>Auth</h2>
+
+    <input type="email" id="email" placeholder="Email"><br><br>
+    <input type="password" id="password" placeholder="Password"><br><br>
+
+    <button onclick="signIn()">Sign In</button><br><br>
+    <button onclick="signUp()">Sign Up</button><br><br>
+    <button onclick="signOut()">Reset Password</button>
+
+    <p id="authMessage"></p>
+
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const supabaseUrl = "https://rnjzrgcxoixnmcrrbxrq.supabase.co";
+        const supabaseKey = "sb_publishable_aLO42mHvFv6-u1Tj2fTx5g_6agj3rir";
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        const msg = document.getElementById("authMessage");
+
+        async function signIn() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            const { error } = await supabaseClient.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            msg.textContent = error ? error.message : "Logged in!";
+        }
+
+        async function signOut() {
+            await supabaseClient.auth.signOut();
+            msg.textContent = "Logged out";
+        }
+
+    </script>
+</body>
+
+</html>
