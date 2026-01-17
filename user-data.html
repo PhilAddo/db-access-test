@@ -1,49 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial scale=1.0" />
-    <title>User Data</title>
-  </head>
-  <body>
-    <h2>User Data</h2>
 
-    <ul id="user-list"></ul>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial scale=1.0" />
+  <title>User Data</title>
+</head>
 
-    <p id="message"></p>
+<body style="display: none;">
+  <input type="button" value="Sign Out" onclick="signOut();">
+  <h2>User Data</h2>
 
-    <!-- Supabase JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <ul id="user-list"></ul>
 
-    <script>
-      const supabaseUrl = "https://rnjzrgcxoixnmcrrbxrq.supabase.co";
-      const supabaseKey = "sb_publishable_aLO42mHvFv6-u1Tj2fTx5g_6agj3rir";
-      const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+  <p id="message"></p>
 
-      const message = document.getElementById("message");
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-      async function fetchUsers() {
-        const { data, error } = await supabaseClient
-          .from("userData")
-          .select("name, location, created_at");
+  <script>
+    const supabaseUrl = "https://rnjzrgcxoixnmcrrbxrq.supabase.co";
+    const supabaseKey = "sb_publishable_aLO42mHvFv6-u1Tj2fTx5g_6agj3rir";
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        if (error) {
-          console.error("Error fetching users:", error.message);
-          message.innerHTML = "Error fetching users.";
-          return;
-        }
+    async function protectPage() {
+      const { data: { user } } =
+        await supabaseClient.auth.getUser();
 
-        const userList = document.getElementById("user-list");
-        userList.innerHTML = "";
-
-        data.forEach((user) => {
-          const li = document.createElement("li");
-          li.textContent = `${user.name} (${user.location}) - ${user.created_at}`;
-          userList.appendChild(li);
-        });
+      if (!user) {
+        window.location.href = "sign-in.html";
+        return;
       }
 
+      const { data, error } = await supabaseClient
+        .from("allowed_emails")
+        .select("email")
+        .eq("email", user.email)
+        .single();
+
+      if (error || !data) {
+        alert("Access denied");
+        await supabaseClient.auth.signOut();
+        window.location.href = "sign-in.html";
+      }
+      //makes the content of the page visible
+      document.body.style.display = "block";
       fetchUsers();
-    </script>
-  </body>
+    }
+
+    protectPage();
+
+
+    const message = document.getElementById("message");
+    let userCount = 0;
+
+    async function fetchUsers() {
+      const { data, error } = await supabaseClient
+        .from("userData")
+        .select("name, location, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching users:", error.message);
+        message.innerHTML = "Error fetching users.";
+        return;
+      }
+
+      const userList = document.getElementById("user-list");
+      userList.innerHTML = "";
+
+      data.forEach((user) => {
+        const li = document.createElement("li");
+        li.textContent = `${user.name} (${user.location}) - ${user.created_at}`;
+        userList.appendChild(li);
+        userCount++;
+      });
+      message.innerHTML = `Count: ${userCount}`;
+    }
+
+    //signs user out
+    async function signOut() {
+      await supabaseClient.auth.signOut();
+      window.location.href = "sign-in.html";
+    }
+  </script>
+</body>
+
 </html>

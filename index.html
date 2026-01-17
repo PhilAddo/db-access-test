@@ -37,6 +37,7 @@
             const name = document.getElementById("name").value;
             const age = document.getElementById("age").value;
             const location = document.getElementById("location").value;
+            message.textContent = "";
 
             const { error } = await supabaseClient
                 .from("userData")
@@ -46,10 +47,11 @@
                 message.textContent = "Error saving data";
                 console.error(error);
             } else {
-                message.textContent = "Data saved successfully!";
+                message.textContent = "Data submitted successfully!";
                 form.reset();
             }
         });
+
     </script>
 
 </body>
