@@ -19,7 +19,7 @@
             <input type="submit" value="Sign In">
         </form><br><br>
 
-        <button onclick="resetPassword()">Reset Password</button><br><br>
+        <button onclick="forgotPassword()">Forgot Password</button><br><br>
 
         Not yet registered? <b onclick="switchToCon('sign-up-con')">Sign up</b>
 
@@ -27,6 +27,8 @@
     </div>
 
     <div id="sign-up-con" style="display: none;">
+        <a href="index.html">User Form</a>
+
         <h2>Sign Up</h2>
         <form id="sign-up-form">
             <input type="email" id="email" placeholder="Email" required><br><br>
@@ -127,6 +129,11 @@
                 return;
             }
             signUp();
+        }
+
+        //redirects to forgot password page
+        function forgotPassword(){
+            window.location.href = "forgot-password.html";
         }
 
     </script>
