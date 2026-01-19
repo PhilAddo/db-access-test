@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
     <title>User Form</title>
 </head>
 
 <body>
 
     <a href="sign-in.html">Admin Sign-in</a>
-    
+
     <h2>User Information</h2>
 
     <form id="userForm">
@@ -50,9 +51,33 @@
                 console.error(error);
             } else {
                 message.textContent = "Data submitted successfully!";
+                sendSMS(name);
                 form.reset();
             }
         });
+
+        //attempts to use the Arkesel SMS service API to send an SMS notification to the admin's phone number
+        async function sendSMS(name) {
+            const url = "https://sms.arkesel.com/api/v2/sms/send";
+            let phoneNumber = "233547144715";
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "api-key": "a3l2cVNJTUV1d3pQYnlTZnZpSlo", // ⚠️
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    sender: "C AutoParts",
+                    message: `New data has been submitted by ${name}. Log in to view details: https://db-access-test.vercel.app/sign-in.html`,
+                    recipients: [phoneNumber]
+                })
+            });
+
+            const result = await response.json();
+            console.log(result);
+            console.log("Response: " + JSON.stringify(result));
+        }
 
     </script>
 

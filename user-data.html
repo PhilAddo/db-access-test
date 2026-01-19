@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
   <title>User Data</title>
 </head>
 
@@ -57,7 +58,7 @@
     async function fetchUsers() {
       const { data, error } = await supabaseClient
         .from("userData")
-        .select("name, location, created_at")
+        .select("id, name, location, created_at")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -70,12 +71,22 @@
       userList.innerHTML = "";
 
       data.forEach((user) => {
-        const li = document.createElement("li");
-        li.textContent = `${user.name} (${user.location}) - ${user.created_at}`;
-        userList.appendChild(li);
+        const li = `<li onclick="showUserDetails('${user.id}');">${user.name} (${user.location}) - ${user.created_at}</li>`;
+        userList.innerHTML += li;
+
         userCount++;
       });
       message.innerHTML = `Count: ${userCount}`;
+    }
+
+    async function showUserDetails(id) {
+      const { data, error } = await supabaseClient
+        .from("userData")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      alert(`Name: ${data.name}\nAge: ${data.age}\nLocation: ${data.location}`)
     }
 
     //signs user out
