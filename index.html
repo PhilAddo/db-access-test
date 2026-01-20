@@ -13,6 +13,7 @@
     <a href="sign-in.html">Admin Sign-in</a>
 
     <h2>User Information</h2>
+    <p><i>Submit your data</i></p>
 
     <form id="userForm">
         <input type="text" id="name" placeholder="Name" required><br><br>
@@ -59,7 +60,7 @@
         //attempts to use the Arkesel SMS service API to send an SMS notification to the admin's phone number
         async function sendSMS(name) {
             const url = "https://sms.arkesel.com/api/v2/sms/send";
-            let phoneNumber = "233547144715";
+            // let phoneNumber = "233547144715";
 
             const response = await fetch(url, {
                 method: "POST",
@@ -70,7 +71,7 @@
                 body: JSON.stringify({
                     sender: "C AutoParts",
                     message: `New data has been submitted by ${name}. Log in to view details: https://db-access-test.vercel.app/sign-in.html`,
-                    recipients: [phoneNumber]
+                    recipients: ["233547144715", "233201328530"]
                 })
             });
 

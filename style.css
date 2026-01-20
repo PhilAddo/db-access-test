@@ -2,3 +2,8 @@ li:hover {
       cursor: pointer;
       background-color: lightgrey;
     }
+
+.link:hover{
+  cursor: pointer;
+  text-decoration: underline;
+}
